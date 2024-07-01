@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: journey-deployment
+  labels:
+    app: journey
+
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: journey
+  template:
+    metadata:
+      labels:
+        app: journey
+    spec:
+      containers:
+        - name: api-journey
+          image: danielrodriguess/nlw.journey.api:94faf07
+          env:
+            - name: JOURNEY_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-connection
+                  key: db_user
+            - name: JOURNEY_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-connection
+                  key: db_password
+            - name: JOURNEY_DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-connection
+                  key: db_host
+            - name: JOURNEY_DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: db-connection
+                  key: db_port
+            - name: JOURNEY_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-connection
+                  key: db_name
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 128Mi
