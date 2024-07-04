@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: nlw-journey
+  namespace: argocd
+
+spec:
+  project: default
+  source:
+    repoURL: ''
+    targetRevision: HEAD
+    path: deploy
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: journey
+  syncPolicy:
+    automated:
+      prune: true
