@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: 
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  run-terraform:
+    name: 'Run terraform'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-to-assume: ${{ secrets.ROLE_ASSUME }}
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ vars.TF_VERSION }}
+
+    - name: Run terraform init
+      run: terraform init
+
+    - name: Run terraform format
+      run: terraform fmt -check
+
+    - name: Run terraform plan
+      run: terraform plan -input=false
+      env:
+        TF_VAR_prefix: ${{ vars.TF_VAR_PREFIX }}
+        TF_VAR_vpc_cidr_block: ${{ vars.TF_VAR_VPC_CIDR_BLOCK }}
+        TF_VAR_cluster_name: ${{ vars.TF_VAR_CLUSTER_NAME }}
+        TF_VAR_retention_days: ${{ vars.TF_VAR_RETENTION_DAYS }}
+        TF_VAR_desired_size: ${{ vars.TF_VAR_DESIRED_SIZE }}
+        TF_VAR_max_size: ${{ vars.TF_VAR_MAX_SIZE }}
+        TF_VAR_min_size: ${{ vars.TF_VAR_MIN_SIZE }}
+
+    - name: Run terraform apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
+      env:
+        TF_VAR_prefix: ${{ vars.TF_VAR_PREFIX }}
+        TF_VAR_vpc_cidr_block: ${{ vars.TF_VAR_VPC_CIDR_BLOCK }}
+        TF_VAR_cluster_name: ${{ vars.TF_VAR_CLUSTER_NAME }}
+        TF_VAR_retention_days: ${{ vars.TF_VAR_RETENTION_DAYS }}
+        TF_VAR_desired_size: ${{ vars.TF_VAR_DESIRED_SIZE }}
+        TF_VAR_max_size: ${{ vars.TF_VAR_MAX_SIZE }}
+        TF_VAR_min_size: ${{ vars.TF_VAR_MIN_SIZE }}

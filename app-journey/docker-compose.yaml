@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   api:
     build: .
     container_name: api
@@ -21,7 +22,7 @@ services:
     ports:
       - ${JOURNEY_DATABASE_PORT}:5432
     environment:
-      POSTGRES_USER: ${JOURNEY_DATABASE_USER}
+      POSTGRES_USER: ${JOURNEY_DATABASE_USER} 
       POSTGRES_PASSWORD: ${JOURNEY_DATABASE_PASSWORD}
       POSTGRES_DB: ${JOURNEY_DATABASE_NAME}
     networks:

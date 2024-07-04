@@ -18,4 +18,4 @@ COPY --from=builder /bin/journey .
 
 EXPOSE 8080
 
-ENTRYPOINT ["./journey"] 
+ENTRYPOINT ["./journey"]

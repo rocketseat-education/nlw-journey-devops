@@ -5,7 +5,8 @@ metadata:
   name: journey-service
   labels:
     app: journey
-spec:
+
+spec: 
   selector:
     app: journey
   type: ClusterIP
